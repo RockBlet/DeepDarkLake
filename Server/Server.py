@@ -1,5 +1,6 @@
 import socket
 import threading
+from dataset import Dataset
 
 
 class Server:
@@ -8,6 +9,10 @@ class Server:
         self.port = port
         self.clients = []
         self.server_socket = None
+
+        self.botTable = "Server/BotTable.csv"
+
+        self.dataset = Dataset(self.botTable)
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -22,6 +27,9 @@ class Server:
         while True:
             client_socket, client_address = self.server_socket.accept()
             self.clients.append(client_socket)
+
+            ip, port = self.dataset.get_raddr(str(client_socket))
+            self.dataset.Push(ip, port)
 
             # Обработка подключения клиента в отдельном потоке
             client_thread = threading.Thread(target=self.handle_client, args=(client_socket,))
@@ -78,5 +86,5 @@ class Server:
 
 
 if __name__ == '__main__':
-    server = Server('localhost', 8080)
+    server = Server("localhost", 8080)
     server.start()
