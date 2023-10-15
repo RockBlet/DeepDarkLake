@@ -1,6 +1,10 @@
 import socket
 import threading
 from dataset import Dataset
+from loguru import logger
+from colorama import Fore, Back, Style
+import logging
+from LoggingFormat import LogFormat
 
 
 class Server:
@@ -14,6 +18,40 @@ class Server:
 
         self.dataset = Dataset(self.botTable)
 
+        #Deep Logger
+        self.Deeplogger = logging.getLogger()
+        self.Deeplogger.setLevel(logging.DEBUG)
+
+        file_handler = logging.FileHandler("Server/Loggs/Loggs.log")
+        file_handler.setLevel(logging.DEBUG)
+
+        log_formatter = LogFormat()
+        file_handler.setFormatter(log_formatter)
+
+        # добавление обработчика файла в регистратор логов
+        self.Deeplogger.addHandler(file_handler)
+
+    def log(self, type, data):
+        serverTitle = Style.BRIGHT + Fore.BLUE + "Server" + Style.NORMAL
+        data = f"{serverTitle} : {data}"
+
+
+        if type == "info":
+            logger.info(data)
+        
+        elif type == "debug":
+            logger.debug(data)
+        
+        elif type == "waring":
+            logger.warning(data) 
+
+        elif type == "error":
+            logger.error(data)
+        
+        elif type == "critical":
+            logger.critical(data)
+
+
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_socket.bind((self.host, self.port))
@@ -21,11 +59,21 @@ class Server:
         print("Server started and listening on {}:{}".format(self.host, self.port))
 
         # Запуск потока для чтения сообщений из терминала
-        input_thread = threading.Thread(target=self.read_input)
+        input_thread = threading.Thread(target=self.console)
         input_thread.start()
 
         while True:
             client_socket, client_address = self.server_socket.accept()
+
+            print(" ")
+
+            self.log("info", f"Connect <{client_address}>")
+            self.log("debug", f"Socket - (({client_socket}))")
+            self.Deeplogger.info(f"Connect <{client_address}>")
+            self.Deeplogger.debug(f"Socket - ({client_socket})")
+
+            #print(".(Type Enter to countinue)")
+
             self.clients.append(client_socket)
 
             ip, port = self.dataset.get_raddr(str(client_socket))
@@ -58,22 +106,30 @@ class Server:
                    "@bot - Bot list",
                    "$panic - to server down"
                    ]
+        if cmd:
+            if cmd[0] == "/":
+                self.broadcast(cmd)
 
-        if cmd[0] == "/":
-            self.broadcast(cmd)
+            elif cmd == "@bot":
+                for bot in self.clients:
+                    print(bot)
 
-        elif cmd == "@bot":
-            for bot in self.clients:
-                print(bot)
+            elif cmd == "$log":
+                self.isLogging = True
+                self.logState = str(input("(Log state)>> "))
 
-        elif cmd == "$panic":
-            exit()
+            elif cmd == "$panic":
+                exit()
 
-        elif cmd == "help":
-            for cmd in cmdList:
-                print(cmd)
+            elif cmd == "help":
+                for cmd in cmdList:
+                    print(cmd)
 
-    def read_input(self):
+            else:
+                pass
+
+    def console(self):
+        
         while True:
             cmd = input(">> ")
             self.source(cmd)

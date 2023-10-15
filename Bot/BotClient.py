@@ -20,7 +20,10 @@ class Client:
         while True:
             try:
                 message = self.client_socket.recv(1024).decode()
-                print("[rcv](command)> {}".format(message))
+
+                if message:
+                    print("[rcv](command)> {}".format(message))
+
             except:
                 break
 

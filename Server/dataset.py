@@ -15,8 +15,6 @@ class Dataset:
 
         return bl
 
-
-
     def Push(self, ip, port):
         with open(self.file, 'a', newline='') as file:
             writer = csv.writer(file)
