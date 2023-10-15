@@ -10,3 +10,7 @@
 2023-10-15 05:09:30,811 | root | DEBUG -> Socket - (<socket.socket fd=1124, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57245)>) (Server.py:73)
 2023-10-15 05:09:34,975 | root | INFO -> Connect <('127.0.0.1', 57246)> (Server.py:72)
 2023-10-15 05:09:34,975 | root | DEBUG -> Socket - (<socket.socket fd=1104, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57246)>) (Server.py:73)
+2023-10-15 05:16:59,644 | root | INFO -> Connect <('127.0.0.1', 57336)> (Server.py:70)
+2023-10-15 05:16:59,644 | root | DEBUG -> Socket - (<socket.socket fd=1096, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57336)>) (Server.py:71)
+2023-10-15 05:17:01,678 | root | INFO -> Connect <('127.0.0.1', 57337)> (Server.py:70)
+2023-10-15 05:17:01,678 | root | DEBUG -> Socket - (<socket.socket fd=1112, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57337)>) (Server.py:71)

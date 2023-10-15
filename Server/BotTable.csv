@@ -38,3 +38,5 @@
 "<socket.socket fd=1196, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57202)>",0
 "<socket.socket fd=1124, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57245)>",0
 "<socket.socket fd=1104, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57246)>",0
+"<socket.socket fd=1096, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57336)>",0
+"<socket.socket fd=1112, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57337)>",0

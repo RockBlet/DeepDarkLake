@@ -18,7 +18,7 @@ class Server:
 
         self.dataset = Dataset(self.botTable)
 
-        #Deep Logger
+        #   Deep Logger
         self.Deeplogger = logging.getLogger()
         self.Deeplogger.setLevel(logging.DEBUG)
 
@@ -35,7 +35,6 @@ class Server:
         serverTitle = Style.BRIGHT + Fore.BLUE + "Server" + Style.NORMAL
         data = f"{serverTitle} : {data}"
 
-
         if type == "info":
             logger.info(data)
         
@@ -50,7 +49,6 @@ class Server:
         
         elif type == "critical":
             logger.critical(data)
-
 
     def start(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

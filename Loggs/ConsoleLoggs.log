@@ -1,7 +1,0 @@
-2023-10-15 05:05:30.643 | INFO     | __main__:log:48 - [1m[34mServer[22m : Connect <('127.0.0.1', 57176)>
-2023-10-15 05:05:30.644 | DEBUG    | __main__:log:51 - [1m[34mServer[22m : Socket - ((<socket.socket fd=1168, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57176)>))
-2023-10-15 05:05:30.644 | DEBUG    | __main__:log:51 - [1m[34mServer[22m : Socket - ((<socket.socket fd=1168, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57176)>))
-2023-10-15 05:05:33.026 | INFO     | __main__:log:48 - [1m[34mServer[22m : Connect <('127.0.0.1', 57178)>
-2023-10-15 05:05:33.026 | INFO     | __main__:log:48 - [1m[34mServer[22m : Connect <('127.0.0.1', 57178)>
-2023-10-15 05:05:33.027 | DEBUG    | __main__:log:51 - [1m[34mServer[22m : Socket - ((<socket.socket fd=1200, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57178)>))
-2023-10-15 05:05:33.027 | DEBUG    | __main__:log:51 - [1m[34mServer[22m : Socket - ((<socket.socket fd=1200, family=2, type=1, proto=0, laddr=('127.0.0.1', 8080), raddr=('127.0.0.1', 57178)>))
