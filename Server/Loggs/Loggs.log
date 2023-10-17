@@ -581,3 +581,4 @@
 2023-10-17 18:43:59,458 | root |DEBUG -> Console.Thread $Start (Server.py:81)
 2023-10-17 18:44:02,064 | root |WARNING -> [Unknown input]($log ) (Server.py:185)
 2023-10-17 18:44:03,480 | root |WARNING -> [Unknown input](3) (Server.py:185)
+2023-10-17 18:44:20,442 | root |CRITICAL -> Panic func is broken, it will/(or was, if u see this msg) down EVERYTHING (Server.py:175)
