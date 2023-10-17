@@ -151,7 +151,11 @@ class Server:
 
             elif cmd == "$log":
                 self.isLogging = True
-                self.logState = int(input("[Loggs](count) > ")) 
+                
+                try:
+                    self.logState = int(input("[Loggs](count) > ")) 
+                except Exception as e:
+                    print(f"\n{e}\n")
 
                 with open(self.LoggHandler, 'r') as file:
                     lines = file.readlines()
