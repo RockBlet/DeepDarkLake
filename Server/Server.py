@@ -134,10 +134,17 @@ class Server:
                 if len(self.clients) == 0:
                     print("[@bot]() - 0 bots conected")
                 
-                elif len(self.clients) > 0:     
+                elif len(self.clients) > 0:
+                    online = Fore.GREEN + "online" + Fore.RESET 
+                    bt = Fore.YELLOW + "BOTS" + Fore.RESET
+                    bc = Fore.YELLOW + str(len(self.clients)) + Fore.RESET
+                    
+                    print(f"┬ {bt}")
                     for bot in self.clients:
-                        print(bot)
-                    print(f"[@bot]() - {len(self.clients)} bots conected")
+                        print(f"├─ {online} {bot}")
+
+                    print("└", end = '')
+                    print("─"*4, f"[@bot]() - {bc} bots conected")
 
                 else:
                     self.Deeplogger.warning("@bot error - ERR <List len>")
@@ -150,12 +157,12 @@ class Server:
                     lines = file.readlines()
                     lastnlines = [line.strip() for line in lines[-self.logState:]][::-1]
                     
-                    title = pyfiglet.figlet_format("LOGGS", font = "digital" ) 
+                    title = Fore.YELLOW + "LOGGS (DEEP)" 
                     loggsT = Fore.YELLOW + str(self.logState) + Fore.RESET
                     loggsEnd = Fore.YELLOW + "END" + Fore.RESET
 
                     print(f"\n{title}")
-                    print("="*64, loggsT, "="*64)          
+                    print("="*64, loggsT, "="*64, "\n")          
                     for log in lastnlines:
                         print("{log}"+f" {log}\n")
 
@@ -169,7 +176,7 @@ class Server:
                 exit()
 
             elif cmd == "help":
-                print(f"- - CMDS list - -")
+                print(f"\n- - CMDS list - -")
                 for cmd in cmdList:
                     print(f"|- - {cmd}")
                 print("\n")
@@ -197,3 +204,4 @@ if __name__ == '__main__':
     sHost, sPort = (C.GetCFG()["serverHost"], C.GetCFG()["serverPort"])
     server = Server(sHost, sPort)
     server.start()
+    

@@ -16,6 +16,15 @@ class Client:
         receive_thread = threading.Thread(target=self.receive_messages)
         receive_thread.start()
 
+        print("[i] Connection - SUCCESS")
+
+    def source(slef, cmd):
+        if cmd == "/source":
+            print("SOURCE FUNC <200>")
+
+        elif cmd == "/ddos":
+            pass
+
     def receive_messages(self):
         while True:
             try:
@@ -23,7 +32,7 @@ class Client:
 
                 if message:
                     print("[rcv](command)> {}".format(message))
-
+                    self.source(message)
             except:
                 break
 
