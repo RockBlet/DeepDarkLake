@@ -32,6 +32,6 @@ class Client:
 
 
 if __name__ == '__main__':
-    client = Client('localhost', 8080)
+    client = Client('localhost', 6666)
     client.connect()
 

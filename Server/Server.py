@@ -6,6 +6,8 @@ from colorama import Fore, Back, Style
 import logging
 from LoggingFormat import LogFormat
 from LDS import logo
+from Config import CFG
+import pyfiglet
 
 
 class Server:
@@ -15,11 +17,14 @@ class Server:
         self.clients = []
         self.server_socket = None
 
-        self.botTable = "Server/BotTable.csv"
-        self.lds = "Server/lds/lds.txt"
-        self.LoggHandler = "Server/Loggs/Loggs.log"
+        self.cfg = CFG()
 
-        self.dataset = Dataset(self.botTable)
+        # YAML configuration
+        self.configuration = self.cfg.GetCFG()
+
+        self.botTable = self.configuration['LibeBotaTableFile']
+        self.lds = self.configuration['Logo']
+        self.LoggHandler = self.configuration['DeepLogHandler']
 
         #   Deep Logger
         self.Deeplogger = logging.getLogger()
@@ -69,13 +74,11 @@ class Server:
         self.server_socket.listen(5)
 
         self.lds.shw(self.host, self.port)
-        
-        print("Server started and listening on {}:{}".format(self.host, self.port))
 
         # Запуск потока для чтения сообщений из терминала
         input_thread = threading.Thread(target=self.console)
         input_thread.start()
-        self.Deeplogger.debug("[Console](read).Thread $Start")
+        self.Deeplogger.debug("Console.Thread $Start")
 
         while True:
             client_socket, client_address = self.server_socket.accept()
@@ -89,9 +92,6 @@ class Server:
 
             self.clients.append(client_socket)
 
-            ip, port = self.dataset.get_raddr(str(client_socket))
-            self.dataset.Push(ip, port)
-
             # Обработка подключения клиента в отдельном потоке
             client_thread = threading.Thread(target=self.handle_client, args=(client_socket,))
             client_thread.start()
@@ -104,7 +104,7 @@ class Server:
                 message = client_socket.recv(1024).decode()
                 if message:
                     print("Received message: {}".format(message))
-                    self.send_to_all_clients(message)
+                    #self.send_to_all_clients(message)
                 else:
                     self.clients.remove(client_socket)
                     break
@@ -112,12 +112,9 @@ class Server:
                 self.clients.remove(client_socket)
                 break
 
-    def broadcast(self, message):
-        self.Deeplogger.debug(f"[broadcasst].msg <{message}>")
-        
+    def broadcast(self, message):        
         for client in self.clients:
             client.send(message.encode())
-            self.Deeplogger.info(f"[send]\n\t|>>>>({client})>({message})")
 
 
     def source(self, cmd):
@@ -129,15 +126,11 @@ class Server:
                    ]
 
         if cmd:
-            self.Deeplogger.info(f"[input]({cmd})")
-
             if cmd[0] == "/":
+                self.Deeplogger.info(f"[/Broadcast] ({cmd})")
                 self.broadcast(cmd)
 
             elif cmd == "@bot":
-                self.Deeplogger.debug(f"count of @bot <Server.bot.connected>")
-
-                
                 if len(self.clients) == 0:
                     print("[@bot]() - 0 bots conected")
                 
@@ -156,20 +149,23 @@ class Server:
                 with open(self.LoggHandler, 'r') as file:
                     lines = file.readlines()
                     lastnlines = [line.strip() for line in lines[-self.logState:]][::-1]
+                    
+                    title = pyfiglet.figlet_format("LOGGS", font = "digital" ) 
+                    loggsT = Fore.YELLOW + str(self.logState) + Fore.RESET
+                    loggsEnd = Fore.YELLOW + "END" + Fore.RESET
 
-                    print("="*96)          
+                    print(f"\n{title}")
+                    print("="*64, loggsT, "="*64)          
                     for log in lastnlines:
-                        print("{")
-                        print(f"  {log}")
-                        print("}")
+                        print("{log}"+f" {log}\n")
 
-                    print("="*96)          
+                    print("="*64, loggsEnd, "="*64)          
 
             elif cmd == '$lds':
-                self.lds.shw()
+                self.lds.shw(self.host, self.port)
 
             elif cmd == "$panic":
-                self.Deeplogger.error("Panic Func is brkn <Server actully UP[ok]>")
+                self.Deeplogger.critical("Panic func is broken, it will/(or was, if u see this msg) down EVERYTHING")
                 exit()
 
             elif cmd == "help":
@@ -197,5 +193,7 @@ class Server:
 
 
 if __name__ == '__main__':
-    server = Server("localhost", 8080)
+    C = CFG()
+    sHost, sPort = (C.GetCFG()["serverHost"], C.GetCFG()["serverPort"])
+    server = Server(sHost, sPort)
     server.start()
