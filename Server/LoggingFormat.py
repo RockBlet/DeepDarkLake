@@ -2,7 +2,7 @@ import logging
 
 
 class LogFormat(logging.Formatter):
-    format = "%(asctime)s | %(name)s | %(levelname)s -> %(message)s (%(filename)s:%(lineno)d)"
+    format = "%(asctime)s | %(name)s |(Deep)%(levelname)s -> %(message)s (%(filename)s:%(lineno)d)"
 
     FORMATS = {
         logging.DEBUG: format,
