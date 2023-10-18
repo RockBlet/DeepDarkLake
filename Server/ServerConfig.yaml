@@ -6,4 +6,5 @@ serverPort: 6666
 
 LibeBotaTableFile: "Server/BotTable.csv"
 Logo: "Server/lds/lds.txt"
+Logo2: "Server/lds/lds2.txt"
 DeepLogHandler: "Server/Loggs/Loggs.log"

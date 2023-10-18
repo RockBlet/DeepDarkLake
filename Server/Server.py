@@ -23,7 +23,12 @@ class Server:
         self.configuration = self.cfg.GetCFG()
 
         self.botTable = self.configuration['LibeBotaTableFile']
+
         self.lds = self.configuration['Logo']
+        self.lds2 = self.configuration['Logo2']
+
+        self.ldsList = [self.lds, self.lds2]
+
         self.LoggHandler = self.configuration['DeepLogHandler']
 
         #   Deep Logger
@@ -40,7 +45,7 @@ class Server:
         self.Deeplogger.addHandler(file_handler)
 
         # LDS module
-        self.lds = logo(self.lds)
+        self.lds = logo(self.ldsList)
 
 
     def log(self, type, data):
