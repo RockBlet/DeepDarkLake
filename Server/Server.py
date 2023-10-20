@@ -7,7 +7,6 @@ import logging
 from LoggingFormat import LogFormat
 from LDS import logo
 from Config import CFG
-import pyfiglet
 
 
 class Server:
@@ -47,6 +46,9 @@ class Server:
         # LDS module
         self.lds = logo(self.ldsList)
 
+        # QServer
+        self.Q = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.Q.connect(('localhost', 7777))
 
     def log(self, type, data):
         serverTitle = Style.BRIGHT + Fore.BLUE + "Server[OUT](Con.Log)" + Style.NORMAL
@@ -102,14 +104,35 @@ class Server:
             client_thread.start()
             self.Deeplogger.info(f"new Thread {client_address}")
 
+    def get_raddr(self, socket_string):
+        start_index = socket_string.find("raddr=(")
 
+        if start_index == -1:
+            return None, None
+
+        end_index = socket_string.find(")", start_index + 7)
+        if end_index == -1:
+            return None, None
+
+        raddr_string = socket_string[start_index + 7:end_index]
+        raddr_list = raddr_string.split(", ")
+
+        ip = raddr_list[0].strip("'")
+        port = int(raddr_list[1])
+
+        ip = socket_string
+        port = 0
+        return ip, port
+    
     def handle_client(self, client_socket):
         while True:
             try:
                 message = client_socket.recv(1024).decode()
-                if message:
-                    print("Received message: {}".format(message))
-                    #self.send_to_all_clients(message)
+                
+                if message != "":
+                    m = message.encode()
+                    self.Q.send(m)
+
                 else:
                     self.clients.remove(client_socket)
                     break
